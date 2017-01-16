@@ -604,10 +604,10 @@ class CookiesTest < ActionController::TestCase
     key_generator = @request.env["action_dispatch.key_generator"]
     encrypted_cookie_salt = @request.env["action_dispatch.encrypted_cookie_salt"]
     encrypted_signed_cookie_salt = @request.env["action_dispatch.encrypted_signed_cookie_salt"]
-    secret = key_generator.generate_key(encrypted_cookie_salt)
+    secret = key_generator.generate_key(encrypted_cookie_salt, ActiveSupport::MessageEncryptor.key_len)
     sign_secret = key_generator.generate_key(encrypted_signed_cookie_salt)
 
-    marshal_value = ActiveSupport::MessageEncryptor.new(secret[0, ActiveSupport::MessageEncryptor.key_len], sign_secret, serializer: Marshal).encrypt_and_sign("bar")
+    marshal_value = ActiveSupport::MessageEncryptor.new(secret, sign_secret, serializer: Marshal).encrypt_and_sign("bar")
     @request.headers["Cookie"] = "foo=#{marshal_value}"
 
     get :get_encrypted_cookie
@@ -616,7 +616,7 @@ class CookiesTest < ActionController::TestCase
     assert_not_equal "bar", cookies[:foo]
     assert_equal "bar", cookies.encrypted[:foo]
 
-    encryptor = ActiveSupport::MessageEncryptor.new(secret[0, ActiveSupport::MessageEncryptor.key_len], sign_secret, serializer: JSON)
+    encryptor = ActiveSupport::MessageEncryptor.new(secret, sign_secret, serializer: JSON)
     assert_equal "bar", encryptor.decrypt_and_verify(@response.cookies["foo"])
   end
 
@@ -626,9 +626,9 @@ class CookiesTest < ActionController::TestCase
     key_generator = @request.env["action_dispatch.key_generator"]
     encrypted_cookie_salt = @request.env["action_dispatch.encrypted_cookie_salt"]
     encrypted_signed_cookie_salt = @request.env["action_dispatch.encrypted_signed_cookie_salt"]
-    secret = key_generator.generate_key(encrypted_cookie_salt)
+    secret = key_generator.generate_key(encrypted_cookie_salt, ActiveSupport::MessageEncryptor.key_len)
     sign_secret = key_generator.generate_key(encrypted_signed_cookie_salt)
-    json_value = ActiveSupport::MessageEncryptor.new(secret[0, ActiveSupport::MessageEncryptor.key_len], sign_secret, serializer: JSON).encrypt_and_sign("bar")
+    json_value = ActiveSupport::MessageEncryptor.new(secret, sign_secret, serializer: JSON).encrypt_and_sign("bar")
     @request.headers["Cookie"] = "foo=#{json_value}"
 
     get :get_encrypted_cookie
@@ -814,9 +814,9 @@ class CookiesTest < ActionController::TestCase
     assert_equal "bar", @controller.send(:cookies).encrypted[:foo]
 
     key_generator = @request.env["action_dispatch.key_generator"]
-    secret = key_generator.generate_key(@request.env["action_dispatch.encrypted_cookie_salt"])
+    secret = key_generator.generate_key(@request.env["action_dispatch.encrypted_cookie_salt"], ActiveSupport::MessageEncryptor.key_len)
     sign_secret = key_generator.generate_key(@request.env["action_dispatch.encrypted_signed_cookie_salt"])
-    encryptor = ActiveSupport::MessageEncryptor.new(secret[0, ActiveSupport::MessageEncryptor.key_len], sign_secret)
+    encryptor = ActiveSupport::MessageEncryptor.new(secret, sign_secret)
     assert_equal "bar", encryptor.decrypt_and_verify(@response.cookies["foo"])
   end
 
@@ -853,9 +853,9 @@ class CookiesTest < ActionController::TestCase
     assert_equal "bar", @controller.send(:cookies).encrypted[:foo]
 
     key_generator = @request.env["action_dispatch.key_generator"]
-    secret = key_generator.generate_key(@request.env["action_dispatch.encrypted_cookie_salt"])
+    secret = key_generator.generate_key(@request.env["action_dispatch.encrypted_cookie_salt"], ActiveSupport::MessageEncryptor.key_len)
     sign_secret = key_generator.generate_key(@request.env["action_dispatch.encrypted_signed_cookie_salt"])
-    encryptor = ActiveSupport::MessageEncryptor.new(secret[0, ActiveSupport::MessageEncryptor.key_len], sign_secret, serializer: JSON)
+    encryptor = ActiveSupport::MessageEncryptor.new(secret, sign_secret, serializer: JSON)
     assert_equal "bar", encryptor.decrypt_and_verify(@response.cookies["foo"])
   end
 
@@ -892,9 +892,9 @@ class CookiesTest < ActionController::TestCase
     assert_equal "bar", @controller.send(:cookies).encrypted[:foo]
 
     key_generator = @request.env["action_dispatch.key_generator"]
-    secret = key_generator.generate_key(@request.env["action_dispatch.encrypted_cookie_salt"])
+    secret = key_generator.generate_key(@request.env["action_dispatch.encrypted_cookie_salt"], ActiveSupport::MessageEncryptor.key_len)
     sign_secret = key_generator.generate_key(@request.env["action_dispatch.encrypted_signed_cookie_salt"])
-    encryptor = ActiveSupport::MessageEncryptor.new(secret[0, ActiveSupport::MessageEncryptor.key_len], sign_secret, serializer: JSON)
+    encryptor = ActiveSupport::MessageEncryptor.new(secret, sign_secret, serializer: JSON)
     assert_equal "bar", encryptor.decrypt_and_verify(@response.cookies["foo"])
   end
 
@@ -931,9 +931,9 @@ class CookiesTest < ActionController::TestCase
     assert_equal "bar", @controller.send(:cookies).encrypted[:foo]
 
     key_generator = @request.env["action_dispatch.key_generator"]
-    secret = key_generator.generate_key(@request.env["action_dispatch.encrypted_cookie_salt"])
+    secret = key_generator.generate_key(@request.env["action_dispatch.encrypted_cookie_salt"], ActiveSupport::MessageEncryptor.key_len)
     sign_secret = key_generator.generate_key(@request.env["action_dispatch.encrypted_signed_cookie_salt"])
-    encryptor = ActiveSupport::MessageEncryptor.new(secret[0, ActiveSupport::MessageEncryptor.key_len], sign_secret, serializer: JSON)
+    encryptor = ActiveSupport::MessageEncryptor.new(secret, sign_secret, serializer: JSON)
     assert_equal "bar", encryptor.decrypt_and_verify(@response.cookies["foo"])
   end
 

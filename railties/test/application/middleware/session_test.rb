@@ -171,9 +171,9 @@ module ApplicationTests
       get "/foo/read_encrypted_cookie"
       assert_equal "1", last_response.body
 
-      secret = app.key_generator.generate_key("encrypted cookie")
+      secret = app.key_generator.generate_key("encrypted cookie", ActiveSupport::MessageEncryptor.key_len)
       sign_secret = app.key_generator.generate_key("signed encrypted cookie")
-      encryptor = ActiveSupport::MessageEncryptor.new(secret[0, ActiveSupport::MessageEncryptor.key_len], sign_secret)
+      encryptor = ActiveSupport::MessageEncryptor.new(secret, sign_secret)
 
       get "/foo/read_raw_cookie"
       assert_equal 1, encryptor.decrypt_and_verify(last_response.body)["foo"]
@@ -220,9 +220,9 @@ module ApplicationTests
       get "/foo/read_encrypted_cookie"
       assert_equal "1", last_response.body
 
-      secret = app.key_generator.generate_key("encrypted cookie")
+      secret = app.key_generator.generate_key("encrypted cookie", ActiveSupport::MessageEncryptor.key_len)
       sign_secret = app.key_generator.generate_key("signed encrypted cookie")
-      encryptor = ActiveSupport::MessageEncryptor.new(secret[0, ActiveSupport::MessageEncryptor.key_len], sign_secret)
+      encryptor = ActiveSupport::MessageEncryptor.new(secret, sign_secret)
 
       get "/foo/read_raw_cookie"
       assert_equal 1, encryptor.decrypt_and_verify(last_response.body)["foo"]
@@ -279,9 +279,9 @@ module ApplicationTests
       get "/foo/read_encrypted_cookie"
       assert_equal "2", last_response.body
 
-      secret = app.key_generator.generate_key("encrypted cookie")
+      secret = app.key_generator.generate_key("encrypted cookie", ActiveSupport::MessageEncryptor.key_len)
       sign_secret = app.key_generator.generate_key("signed encrypted cookie")
-      encryptor = ActiveSupport::MessageEncryptor.new(secret[0, ActiveSupport::MessageEncryptor.key_len], sign_secret)
+      encryptor = ActiveSupport::MessageEncryptor.new(secret, sign_secret)
 
       get "/foo/read_raw_cookie"
       assert_equal 2, encryptor.decrypt_and_verify(last_response.body)["foo"]

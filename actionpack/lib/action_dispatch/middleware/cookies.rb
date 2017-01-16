@@ -576,7 +576,7 @@ module ActionDispatch
             "Read the upgrade documentation to learn more about this new config option."
         end
 
-        secret = key_generator.generate_key(request.encrypted_cookie_salt || "")[0, ActiveSupport::MessageEncryptor.key_len]
+        secret = key_generator.generate_key(request.encrypted_cookie_salt || "", ActiveSupport::MessageEncryptor.key_len)
         sign_secret = key_generator.generate_key(request.encrypted_signed_cookie_salt || "")
         @encryptor = ActiveSupport::MessageEncryptor.new(secret, sign_secret, digest: digest, serializer: ActiveSupport::MessageEncryptor::NullSerializer)
       end
